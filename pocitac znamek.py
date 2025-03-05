@@ -38,6 +38,7 @@ def show_help():
     print("- LOAD:  Načte dříve uložené známky a váhy")
     print("- DELSAVE: Smaže uložené známky a váhy")
     print("- PRIMT: Zobrazí známky a váhy ve formátu pro SET")
+    print("- RM:    Smaže aktuální i uložené známky a váhy")
     print("- HELP:  Zobrazí tento seznam příkazů")
     print("- EXIT:  Ukončí aplikaci")
 
@@ -59,6 +60,13 @@ def delsave_grades():
     global saved_grades
     saved_grades.clear()
     print("Uložené známky a váhy byly smazány.")
+
+def rm_grades():
+    """Smaže aktuální i uložené známky a váhy."""
+    global grades, saved_grades
+    grades.clear()
+    saved_grades.clear()
+    print("Aktuální i uložené známky a váhy byly smazány.")
 
 def format_for_set(grades):
     """Vrátí známky a váhy ve formátu pro SET."""
@@ -115,6 +123,8 @@ def main():
             load_grades()
         elif command == "DELSAVE":
             delsave_grades()
+        elif command == "RM":
+            rm_grades()
         elif command == "PRIMT":
             print(format_for_set(grades))
         elif command == "HELP":
