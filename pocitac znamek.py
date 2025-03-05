@@ -6,7 +6,6 @@ saved_grades = []
 def parse_grade(grade_str):
     """Zpracuje vstupní řetězec s možným mínusem, jako '1-' na 1.5."""
     if grade_str.endswith("-"):
-        # Přidáme 0.5 k hodnotě, pokud končí znakem '-'
         return float(grade_str[:-1]) + 0.5
     return float(grade_str)
 
@@ -16,9 +15,7 @@ def parse_weight(weight_str):
 
 def calculate_expression(expression):
     try:
-        # Nahradíme symboly "×" za "*", aby Python zvládl výpočet
         expression = expression.replace("×", "*")
-        # Vypočítáme výsledek zadaného výrazu
         result = eval(expression)
         return result
     except Exception as e:
@@ -32,7 +29,6 @@ def calculate_average(grades):
 
 def show_help():
     print("Dostupné příkazy:")
-    print(" ")
     print("- SET    (0.5×1 + 0.25×2) / (0.5 + 0.25): Nastaví výchozí průměr")
     print("- ADD    grade weight: Přidá novou známku a váhu (např. ADD 2 0.5)")
     print("- SHOW:  Zobrazí aktuální známky a váhy")
@@ -41,31 +37,38 @@ def show_help():
     print("- SAVE:  Uloží aktuální známky a váhy")
     print("- LOAD:  Načte dříve uložené známky a váhy")
     print("- DELSAVE: Smaže uložené známky a váhy")
+    print("- PRIMT: Zobrazí známky a váhy ve formátu pro SET")
     print("- HELP:  Zobrazí tento seznam příkazů")
     print("- EXIT:  Ukončí aplikaci")
-    print(" ")
 
 def save_grades():
-    """Uloží aktuální známky a váhy do globální proměnné."""
     global saved_grades
     saved_grades = grades.copy()
     print("Známky a váhy byly uloženy.")
 
 def load_grades():
-    """Načte uložené známky a váhy z globální proměnné."""
     global grades
     if saved_grades:
-        grades.clear()  # Nejprve smažeme aktuální známky
-        grades.extend(saved_grades)  # Načteme uložené hodnoty
+        grades.clear()
+        grades.extend(saved_grades)
         print("Známky a váhy byly načteny.")
     else:
         print("Žádné uložené známky nejsou k dispozici.")
 
 def delsave_grades():
-    """Smaže uložené známky a váhy."""
     global saved_grades
     saved_grades.clear()
     print("Uložené známky a váhy byly smazány.")
+
+def format_for_set(grades):
+    """Vrátí známky a váhy ve formátu pro SET."""
+    if not grades:
+        return "Žádné známky nejsou zadány."
+    
+    weights_sum = sum(weight for _, weight in grades)
+    terms = [f"{weight:.2f}×{grade}" for grade, weight in grades]
+    expression = " + ".join(terms)
+    return f"({expression}) / ({weights_sum:.2f})"
 
 def main():
     global grades
@@ -76,20 +79,19 @@ def main():
         command = input("Zadej příkaz: ").strip().upper()
         if command.startswith("SET"):
             try:
-                expression = command[4:].strip()  # Získá výraz po "SET"
+                expression = command[4:].strip()
                 result = calculate_expression(expression)
                 if result is not None:
-                    # Extrahujeme jednotlivé známky a váhy z výrazu
                     matches = re.findall(r"([\d.-]+)\s*×\s*([\d.]+)", expression)
-                    grades = [(parse_grade(g), parse_weight(w)) for g, w in matches]
+                    grades = [(parse_grade(g), parse_weight(w)) for w, g in matches]
                     print(f"Výchozí známky a váhy byly nastaveny. Průměr: {result:.2f}")
             except Exception as e:
                 print(f"Chyba při nastavování: {e}")
         elif command.startswith("ADD"):
             try:
                 _, grade, weight = command.split()
-                grade = parse_grade(grade)  # Zpracujeme známku se znaménkem
-                weight = parse_weight(weight)  # Zpracujeme váhu s dvěma desetinnými místy
+                grade = parse_grade(grade)
+                weight = parse_weight(weight)
                 grades.append((grade, weight))
                 print(f"Přidána známka {grade} s váhou {weight}.")
             except ValueError:
@@ -113,6 +115,8 @@ def main():
             load_grades()
         elif command == "DELSAVE":
             delsave_grades()
+        elif command == "PRIMT":
+            print(format_for_set(grades))
         elif command == "HELP":
             show_help()
         elif command == "EXIT":
