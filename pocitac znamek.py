@@ -1,5 +1,8 @@
 import re
 
+# Globální proměnná pro uložení známek a vah
+saved_grades = []
+
 def parse_grade(grade_str):
     """Zpracuje vstupní řetězec s možným mínusem, jako '1-' na 1.5."""
     if grade_str.endswith("-"):
@@ -35,11 +38,37 @@ def show_help():
     print("- SHOW:  Zobrazí aktuální známky a váhy")
     print("- CALC:  Spočítá aktuální průměr")
     print("- DEL:   Smaže všechny známky a váhy")
+    print("- SAVE:  Uloží aktuální známky a váhy")
+    print("- LOAD:  Načte dříve uložené známky a váhy")
+    print("- DELSAVE: Smaže uložené známky a váhy")
     print("- HELP:  Zobrazí tento seznam příkazů")
     print("- EXIT:  Ukončí aplikaci")
     print(" ")
 
+def save_grades():
+    """Uloží aktuální známky a váhy do globální proměnné."""
+    global saved_grades
+    saved_grades = grades.copy()
+    print("Známky a váhy byly uloženy.")
+
+def load_grades():
+    """Načte uložené známky a váhy z globální proměnné."""
+    global grades
+    if saved_grades:
+        grades.clear()  # Nejprve smažeme aktuální známky
+        grades.extend(saved_grades)  # Načteme uložené hodnoty
+        print("Známky a váhy byly načteny.")
+    else:
+        print("Žádné uložené známky nejsou k dispozici.")
+
+def delsave_grades():
+    """Smaže uložené známky a váhy."""
+    global saved_grades
+    saved_grades.clear()
+    print("Uložené známky a váhy byly smazány.")
+
 def main():
+    global grades
     grades = []
     print("Aplikace pro výpočet průměru známek. Zadej HELP pro nápovědu.")
     
@@ -78,6 +107,12 @@ def main():
         elif command == "DEL":
             grades.clear()
             print("Všechny známky a váhy byly smazány.")
+        elif command == "SAVE":
+            save_grades()
+        elif command == "LOAD":
+            load_grades()
+        elif command == "DELSAVE":
+            delsave_grades()
         elif command == "HELP":
             show_help()
         elif command == "EXIT":
