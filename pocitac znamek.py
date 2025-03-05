@@ -30,7 +30,7 @@ def calculate_average(grades):
 def show_help():
     print("Dostupné příkazy:")
     print("- SET    (0.5\u00d71 + 0.25\u00d72) / (0.5 + 0.25): Nastaví výchozí průměr")
-    print("- ADD    Přidá nové známky a váhy (např. ADD 2 0.5, 3 0.25)")
+    print("- ADD    grade weight[, grade weight...]: Přidá nové známky a váhy (např. ADD 2 0.5, 3 0.25)")
     print("- SHOW:  Zobrazí aktuální známky a váhy")
     print("- CALC:  Spočítá aktuální průměr")
     print("- DEL:   Smaže všechny známky a váhy")
@@ -78,64 +78,72 @@ def format_for_set(grades):
     expression = " + ".join(terms)
     return f"({expression}) / ({weights_sum:.2f})"
 
+def process_command(command):
+    global grades
+    if command.startswith("SET"):
+        try:
+            expression = command[4:].strip()
+            result = calculate_expression(expression)
+            if result is not None:
+                matches = re.findall(r"([\d.-]+)\s*\u00d7\s*([\d.]+)", expression)
+                grades = [(parse_grade(g), parse_weight(w)) for w, g in matches]
+                print(f"Výchozí známky a váhy byly nastaveny. Průměr: {result:.2f}")
+        except Exception as e:
+            print(f"Chyba při nastavování: {e}")
+    elif command.startswith("ADD"):
+        try:
+            entries = command[4:].strip().split(",")
+            for entry in entries:
+                grade, weight = entry.strip().split()
+                grade = parse_grade(grade)
+                weight = parse_weight(weight)
+                grades.append((grade, weight))
+            print(f"Přidány známky a váhy: {', '.join(entries)}.")
+        except ValueError:
+            print("Chybný formát. Použij: ADD grade weight[, grade weight...]")
+    elif command == "SHOW":
+        if grades:
+            print("Známky a váhy:")
+            for grade, weight in grades:
+                print(f"Známka: {grade}, Váha: {weight}")
+        else:
+            print("Žádné známky nejsou zadány.")
+    elif command == "CALC":
+        average = calculate_average(grades)
+        print(f"Aktuální vážený průměr je: {average:.2f}")
+    elif command == "DEL":
+        grades.clear()
+        print("Všechny známky a váhy byly smazány.")
+    elif command == "SAVE":
+        save_grades()
+    elif command == "LOAD":
+        load_grades()
+    elif command == "DELSAVE":
+        delsave_grades()
+    elif command == "RM":
+        rm_grades()
+    elif command == "PRIMT":
+        print(format_for_set(grades))
+    elif command == "HELP":
+        show_help()
+    elif command == "EXIT":
+        print("Ukončuji aplikaci.")
+        return False
+    else:
+        print("Neznámý příkaz. Zadej HELP pro nápovědu.")
+    return True
+
 def main():
     global grades
     grades = []
     print("Aplikace pro výpočet průměru známek. Zadej HELP pro nápovědu.")
     
     while True:
-        command = input("Zadej příkaz: ").strip().upper()
-        if command.startswith("SET"):
-            try:
-                expression = command[4:].strip()
-                result = calculate_expression(expression)
-                if result is not None:
-                    matches = re.findall(r"([\d.-]+)\s*\u00d7\s*([\d.]+)", expression)
-                    grades = [(parse_grade(g), parse_weight(w)) for w, g in matches]
-                    print(f"Výchozí známky a váhy byly nastaveny. Průměr: {result:.2f}")
-            except Exception as e:
-                print(f"Chyba při nastavování: {e}")
-        elif command.startswith("ADD"):
-            try:
-                entries = command[4:].strip().split(",")
-                for entry in entries:
-                    grade, weight = entry.strip().split()
-                    grade = parse_grade(grade)
-                    weight = parse_weight(weight)
-                    grades.append((grade, weight))
-                print(f"Přidány známky a váhy: {', '.join(entries)}.")
-            except ValueError:
-                print("Chybný formát. Použij: ADD grade weight[, grade weight...]")
-        elif command == "SHOW":
-            if grades:
-                print("Známky a váhy:")
-                for grade, weight in grades:
-                    print(f"Známka: {grade}, Váha: {weight}")
-            else:
-                print("Žádné známky nejsou zadány.")
-        elif command == "CALC":
-            average = calculate_average(grades)
-            print(f"Aktuální vážený průměr je: {average:.2f}")
-        elif command == "DEL":
-            grades.clear()
-            print("Všechny známky a váhy byly smazány.")
-        elif command == "SAVE":
-            save_grades()
-        elif command == "LOAD":
-            load_grades()
-        elif command == "DELSAVE":
-            delsave_grades()
-        elif command == "RM":
-            rm_grades()
-        elif command == "PRIMT":
-            print(format_for_set(grades))
-        elif command == "HELP":
-            show_help()
-        elif command == "EXIT":
-            print("Ukončuji aplikaci.")
-            break
-        else:
-            print("Neznámý příkaz. Zadej HELP pro nápovědu.")
+        input_commands = input("Zadej příkaz: ").strip().upper()
+        commands = input_commands.split("*")
+        for command in commands:
+            if not process_command(command.strip()):
+                return
 
 if __name__ == "__main__":
     main()
