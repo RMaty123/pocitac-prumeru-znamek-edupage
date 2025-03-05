@@ -1,5 +1,16 @@
 import re
 
+def parse_grade(grade_str):
+    """Zpracuje vstupní řetězec s možným mínusem, jako '1-' na 1.5."""
+    if grade_str.endswith("-"):
+        # Přidáme 0.5 k hodnotě, pokud končí znakem '-'
+        return float(grade_str[:-1]) + 0.5
+    return float(grade_str)
+
+def parse_weight(weight_str):
+    """Zpracuje váhu a zajistí, že bude mít správný formát s dvěma desetinnými místy."""
+    return round(float(weight_str), 2)
+
 def calculate_expression(expression):
     try:
         # Nahradíme symboly "×" za "*", aby Python zvládl výpočet
@@ -40,16 +51,16 @@ def main():
                 result = calculate_expression(expression)
                 if result is not None:
                     # Extrahujeme jednotlivé známky a váhy z výrazu
-                    matches = re.findall(r"([\d.]+)\s*×\s*([\d.]+)", expression)
-                    grades = [(float(g), float(w)) for w, g in matches]
+                    matches = re.findall(r"([\d.-]+)\s*×\s*([\d.]+)", expression)
+                    grades = [(parse_grade(g), parse_weight(w)) for g, w in matches]
                     print(f"Výchozí známky a váhy byly nastaveny. Průměr: {result:.2f}")
             except Exception as e:
                 print(f"Chyba při nastavování: {e}")
         elif command.startswith("ADD"):
             try:
                 _, grade, weight = command.split()
-                grade = float(grade)
-                weight = float(weight)
+                grade = parse_grade(grade)  # Zpracujeme známku se znaménkem
+                weight = parse_weight(weight)  # Zpracujeme váhu s dvěma desetinnými místy
                 grades.append((grade, weight))
                 print(f"Přidána známka {grade} s váhou {weight}.")
             except ValueError:
