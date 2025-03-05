@@ -15,7 +15,7 @@ def parse_weight(weight_str):
 
 def calculate_expression(expression):
     try:
-        expression = expression.replace("×", "*")
+        expression = expression.replace("\u00d7", "*")
         result = eval(expression)
         return result
     except Exception as e:
@@ -29,8 +29,8 @@ def calculate_average(grades):
 
 def show_help():
     print("Dostupné příkazy:")
-    print("- SET    (0.5×1 + 0.25×2) / (0.5 + 0.25): Nastaví výchozí průměr")
-    print("- ADD    grade weight: Přidá novou známku a váhu (např. ADD 2 0.5)")
+    print("- SET    (0.5\u00d71 + 0.25\u00d72) / (0.5 + 0.25): Nastaví výchozí průměr")
+    print("- ADD    Přidá nové známky a váhy (např. ADD 2 0.5, 3 0.25)")
     print("- SHOW:  Zobrazí aktuální známky a váhy")
     print("- CALC:  Spočítá aktuální průměr")
     print("- DEL:   Smaže všechny známky a váhy")
@@ -74,7 +74,7 @@ def format_for_set(grades):
         return "Žádné známky nejsou zadány."
     
     weights_sum = sum(weight for _, weight in grades)
-    terms = [f"{weight:.2f}×{grade}" for grade, weight in grades]
+    terms = [f"{weight:.2f}\u00d7{grade}" for grade, weight in grades]
     expression = " + ".join(terms)
     return f"({expression}) / ({weights_sum:.2f})"
 
@@ -90,20 +90,22 @@ def main():
                 expression = command[4:].strip()
                 result = calculate_expression(expression)
                 if result is not None:
-                    matches = re.findall(r"([\d.-]+)\s*×\s*([\d.]+)", expression)
+                    matches = re.findall(r"([\d.-]+)\s*\u00d7\s*([\d.]+)", expression)
                     grades = [(parse_grade(g), parse_weight(w)) for w, g in matches]
                     print(f"Výchozí známky a váhy byly nastaveny. Průměr: {result:.2f}")
             except Exception as e:
                 print(f"Chyba při nastavování: {e}")
         elif command.startswith("ADD"):
             try:
-                _, grade, weight = command.split()
-                grade = parse_grade(grade)
-                weight = parse_weight(weight)
-                grades.append((grade, weight))
-                print(f"Přidána známka {grade} s váhou {weight}.")
+                entries = command[4:].strip().split(",")
+                for entry in entries:
+                    grade, weight = entry.strip().split()
+                    grade = parse_grade(grade)
+                    weight = parse_weight(weight)
+                    grades.append((grade, weight))
+                print(f"Přidány známky a váhy: {', '.join(entries)}.")
             except ValueError:
-                print("Chybný formát. Použij: ADD grade weight")
+                print("Chybný formát. Použij: ADD grade weight[, grade weight...]")
         elif command == "SHOW":
             if grades:
                 print("Známky a váhy:")
