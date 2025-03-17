@@ -29,18 +29,18 @@ def calculate_average(grades):
 
 def show_help():
     print("Dostupné příkazy:")
-    print("- SET    (0.5\u00d71 + 0.25\u00d72) / (0.5 + 0.25): Nastaví výchozí průměr")
-    print("- ADD    grade weight[, grade weight...]: Přidá nové známky a váhy (např. ADD 2 0.5, 3 0.25)")
-    print("- SHOW:  Zobrazí aktuální známky a váhy")
-    print("- CALC:  Spočítá aktuální průměr")
-    print("- DEL:   Smaže všechny známky a váhy")
-    print("- SAVE:  Uloží aktuální známky a váhy")
-    print("- LOAD:  Načte dříve uložené známky a váhy")
+    print("- SET      (0.5\u00d71 + 0.25\u00d72) / (0.5 + 0.25): Nastaví výchozí průměr")
+    print("- ADD      Přidání nové známky a váhy (např. ADD 2 0.5, 3 0.25)")
+    print("- SHOW:    Zobrazí aktuální známky a váhy")
+    print("- CALC:    Spočítá aktuální průměr")
+    print("- DEL:     Smaže všechny známky a váhy")
+    print("- SAVE:    Uloží aktuální známky a váhy")
+    print("- LOAD:    Načte dříve uložené známky a váhy")
     print("- DELSAVE: Smaže uložené známky a váhy")
-    print("- PRIMT: Zobrazí známky a váhy ve formátu pro SET")
-    print("- RM:    Smaže aktuální i uložené známky a váhy")
-    print("- HELP:  Zobrazí tento seznam příkazů")
-    print("- EXIT:  Ukončí aplikaci")
+    print("- PRIMT:   Zobrazí známky a váhy ve formátu pro SET")
+    print("- RM:      Smaže aktuální i uložené známky a váhy")
+    print("- HELP:    Zobrazí tento seznam příkazů")
+    print("- EXIT:    Ukončí aplikaci")
 
 def save_grades():
     global saved_grades
