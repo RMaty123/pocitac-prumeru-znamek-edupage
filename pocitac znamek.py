@@ -29,8 +29,8 @@ def calculate_average(grades):
 
 def show_help():
     print("Dostupné příkazy:")
-    print("- SET      (0.5\u00d71 + 0.25\u00d72) / (0.5 + 0.25): Nastaví výchozí průměr")
-    print("- ADD      Přidání nové známky a váhy (např. ADD 2 0.5, 3 0.25)")
+    print("- SET      Nastaví výchozí průměr pomocí výpočetního vzorce")
+    print("- ADD      Přidá nové známky a váhy (např. ADD 2 0.5, 3 0.25)")
     print("- SHOW:    Zobrazí aktuální známky a váhy")
     print("- CALC:    Spočítá aktuální průměr")
     print("- DEL:     Smaže všechny známky a váhy")
