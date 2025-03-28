@@ -37,7 +37,7 @@ def show_help():
     print("- SAVE:    Uloží aktuální známky a váhy")
     print("- LOAD:    Načte dříve uložené známky a váhy")
     print("- DELSAVE: Smaže uložené známky a váhy")
-    print("- PRIMT:   Zobrazí známky a váhy ve formátu pro SET")
+    print("- PRINT:   Zobrazí známky a váhy ve formátu pro SET")
     print("- RM:      Smaže aktuální i uložené známky a váhy")
     print("- HELP:    Zobrazí tento seznam příkazů")
     print("- EXIT:    Ukončí aplikaci")
@@ -100,7 +100,7 @@ def process_command(command):
                 grades.append((grade, weight))
             print(f"Přidány známky a váhy: {', '.join(entries)}.")
         except ValueError:
-            print("Chybný formát. Použij: ADD grade weight[, grade weight...]")
+            print("Chybný formát. Ověřte správnost v manuálu, správně: známka váha, známka váha")
     elif command == "SHOW":
         if grades:
             print("Známky a váhy:")
@@ -122,7 +122,7 @@ def process_command(command):
         delsave_grades()
     elif command == "RM":
         rm_grades()
-    elif command == "PRIMT":
+    elif command == "PRINT":
         print(format_for_set(grades))
     elif command == "HELP":
         show_help()
